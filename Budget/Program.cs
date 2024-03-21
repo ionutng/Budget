@@ -1,4 +1,8 @@
+﻿using Budget.Data;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<BudgetContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BudgetContext") ?? throw new InvalidOperationException("Connection string 'BudgetContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
