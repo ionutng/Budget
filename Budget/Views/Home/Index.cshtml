@@ -4,4 +4,17 @@
 
 <div class="text-center">
     <h1 class="display-4">Budget App</h1>
+    <button id="addCategoriesBtn" onclick="showAddCategoryForm()">Add Category</button>
+    <button id="showCategoriesBtn" onclick="displayCategories()">Show Categories</button>
+
+    <div hidden id="addCategoryDiv">
+        <form method="POST" onsubmit="addCategory()">
+            <label for="addCategoryName">Category Name:</label>
+            <input type="text" id="addCategoryName" placeholder="Enter a category's name" />
+            <input type="submit" value="Add" />
+        </form>
+    </div>
+
+    <div id="categoriesDiv">
+    </div>
 </div>
