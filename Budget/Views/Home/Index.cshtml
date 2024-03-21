@@ -6,6 +6,8 @@
     <h1 class="display-4">Budget App</h1>
     <button id="addCategoriesBtn" onclick="showAddCategoryForm()">Add Category</button>
     <button id="showCategoriesBtn" onclick="displayCategories()">Show Categories</button>
+    <button id="showTransactionsBtn" onclick="displayTransactions()">Show Transactions</button>
+    <button id="addTransactionsBtn" onclick="showAddTransactionForm()">Add Transaction</button>
 
     <div hidden id="addCategoryDiv">
         <form method="POST" onsubmit="addCategory()">
@@ -17,4 +19,33 @@
 
     <div id="categoriesDiv">
     </div>
+
+    <div hidden id="addTransactionDiv">
+        <form class="d-flex flex-column justify-content-center align-items-center" method="POST" onsubmit="addTransaction()">
+            <label for="addTransactionName">Transaction Name:</label>
+            <input type="text" id="addTransactionName" placeholder="Enter a transactions's name" />
+            <label for="addTransactionDate">Transaction Date:</label>
+            <input type="date" id="addTransactionDate" />
+            <label for="addTransactionAmount">Transaction Amount:</label>
+            <input type="text" id="addTransactionAmount" placeholder="Enter a transactions's amount" />
+            <label for="categories">Transaction Category:</label>
+            <select name="categories" id="categories">
+            </select>
+            <input type="submit" value="Add" />
+        </form>
+    </div>
+
+    <table hidden id="transactionsTable" class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="transactions"></tbody>
+    </table>
 </div>
