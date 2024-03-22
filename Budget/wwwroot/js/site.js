@@ -162,6 +162,7 @@ async function displayTransactions() {
     const showTransactionsBtn = document.querySelector('#showTransactionsBtn');
     const transactionsTable = document.querySelector('#transactionsTable');
     const tBodyTransactions = document.querySelector('#transactions');
+    const searchTransactionsForm = document.querySelector('#searchTransactionsForm');
 
     if (showTransactionsBtn.textContent === 'Show Transactions') {
         showTransactionsBtn.textContent = 'Hide Transactions';
@@ -220,10 +221,14 @@ async function displayTransactions() {
             deleteBtn.textContent = 'Delete';
             deleteBtn.addEventListener('click', () => deleteTransaction(transaction.id));
             td6.appendChild(deleteBtn);
+
+            searchTransactionsForm.removeAttribute('hidden');
         });
     } else {
         showTransactionsBtn.textContent = 'Show Transactions';
         transactionsTable.setAttribute('hidden', '');
+        searchTransactionsForm.setAttribute('hidden', '');
+        document.querySelector('#searchTransactionName').value = '';
     }
 }
 
@@ -245,13 +250,13 @@ async function updateTransaction(id) {
 
         let date = document.createElement('input');
         date.type = 'date';
-        date.id = 'date';
+        date.id = `date${id}`;
         date.value = transactionDate.textContent;
         transactionDate.textContent = '';
         transactionDate.appendChild(date);
 
         let select = document.createElement('select');
-        select.id = 'select';
+        select.id = `select${id}`;
 
         categories.forEach(category => {
             let categoryOption = document.createElement('option');
@@ -268,11 +273,11 @@ async function updateTransaction(id) {
         transactionName.contentEditable = false;
         transactionAmount.contentEditable = false;
 
-        const date = document.querySelector('#date');
+        const date = document.querySelector(`#date${id}`);
         transactionDate.textContent = date.value;
         date.remove();
 
-        const select = document.querySelector('#select');
+        const select = document.querySelector(`#select${id}`);
         transactionCategory.textContent = select.value;
         select.remove();
 
@@ -338,4 +343,84 @@ async function showAddTransactionForm() {
             categoriesSelect.remove(document.querySelector('option'));
         });
     }
+}
+
+async function searchTransactionsByName() {
+    const searchTransactionName = document.querySelector('#searchTransactionName');
+
+    let transactions;
+    await getTransactionByName(searchTransactionName.value).then(data => transactions = data);
+
+    displaySearchTransactions(transactions);
+}
+
+async function getTransactionByName(name) {
+    let myTransactions = [];
+    let transactions;
+    await getTransactions().then(data => transactions = data);
+
+    transactions.forEach(transaction => {
+        if (transaction.name.toString().toLowerCase() === name.toString().toLowerCase())
+            myTransactions.push(transaction);
+
+    });
+
+    return myTransactions;
+}
+
+async function displaySearchTransactions(transactions) {
+    const tBodyTransactions = document.querySelector('#transactions');
+
+    tBodyTransactions.textContent = '';
+
+    let categories;
+    await getCategories().then(data => categories = data);
+
+    transactions.forEach(transaction => {
+        let tr = tBodyTransactions.insertRow();
+
+        let td1 = tr.insertCell(0);
+        let name = document.createElement('div');
+        name.id = `transactionName${transaction.id}`;
+        name.textContent = transaction.name;
+        td1.appendChild(name);
+
+        let td2 = tr.insertCell(1);
+        let date = document.createElement('div');
+        date.id = `transactionDate${transaction.id}`;
+        date.textContent = transaction.date;
+        td2.appendChild(date);
+
+        let td3 = tr.insertCell(2);
+        let amount = document.createElement('div');
+        amount.id = `transactionAmount${transaction.id}`;
+        amount.textContent = transaction.amount;
+        td3.appendChild(amount);
+
+        let category;
+        categories.forEach(c => {
+            if (c.id === transaction.categoryId)
+                category = c;
+        });
+
+        let td4 = tr.insertCell(3);
+        let categoryDiv = document.createElement('div');
+        categoryDiv.id = `transactionCategory${transaction.id}`;
+        categoryDiv.textContent = category.name;
+        td4.appendChild(categoryDiv);
+
+        let td5 = tr.insertCell(4);
+        let editBtn = document.createElement('button');
+        editBtn.id = `editTransactionBtn${transaction.id}`;
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', () => updateTransaction(transaction.id));
+        td5.appendChild(editBtn);
+
+        let td6 = tr.insertCell(5);
+        let deleteBtn = document.createElement('button');
+        deleteBtn.id = `deleteTransactionBtn${transaction.id}`;
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => deleteTransaction(transaction.id));
+        td6.appendChild(deleteBtn);
+    });
 }

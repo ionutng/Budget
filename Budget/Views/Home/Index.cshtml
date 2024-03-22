@@ -35,6 +35,12 @@
         </form>
     </div>
 
+    <form hidden method="GET" id="searchTransactionsForm">
+        <label for="searchTransactionName">Transaction Name:</label>
+        <input type="text" id="searchTransactionName" placeholder="Enter a transaction's name'"/>
+        <input type="button" value="Filter" onclick="searchTransactionsByName()"  />
+    </form>
+
     <table hidden id="transactionsTable" class="table">
         <thead>
             <tr>
