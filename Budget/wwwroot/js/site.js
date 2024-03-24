@@ -1,10 +1,12 @@
 ﻿const uriCategories = 'api/categories';
 const uriTransactions = 'api/transactions';
+
 function addCategory() {
-    const categoryName = document.querySelector('#addCategoryName');
+    let categoryName = document.querySelector('#addCategoryName').value.trim();
+    categoryName = categoryName.toString()[0].toUpperCase() + categoryName.slice(1).toLowerCase();
 
     const category = {
-        name: categoryName.value.trim()
+        name: categoryName
     }
 
     fetch(uriCategories, {
@@ -35,8 +37,7 @@ async function displayCategories() {
         categoriesDiv.textContent = '';
         categoriesDiv.removeAttribute('hidden');
 
-        let categories;
-        await getCategories().then(data => categories = data);
+        let categories = await getCategories();
 
         categories.forEach(category => {
             let categoryDiv = document.createElement('div');
@@ -46,16 +47,19 @@ async function displayCategories() {
             let name = document.createElement('div');
             name.textContent = category.name;
             name.id = `categoryName${category.id}`;
+            name.classList.add('lead', 'fw-bold');
             categoryDiv.appendChild(name);
 
             let editBtn = document.createElement('button');
             editBtn.textContent = 'Edit';
             editBtn.id = `editCategoryBtn${category.id}`;
+            editBtn.classList.add('btn', 'btn-warning');
             editBtn.addEventListener('click', () => updateCategory(category.id));
             categoryDiv.appendChild(editBtn);
 
             let deleteBtn = document.createElement('button');
             deleteBtn.textContent = 'Delete';
+            deleteBtn.classList.add('btn', 'btn-danger');
             deleteBtn.addEventListener('click', () => deleteCategory(category.id));
             categoryDiv.appendChild(deleteBtn);
         });
@@ -68,10 +72,11 @@ async function displayCategories() {
 
 function updateCategory(id) {
     const categoryNameDiv = document.querySelector(`#categoryName${id}`);
+    let categoryName = categoryNameDiv.textContent.trim().toString()[0].toUpperCase() + categoryNameDiv.textContent.trim().slice(1).toLowerCase();
     const editBtn = document.querySelector(`#editCategoryBtn${id}`);
     const category = {
         id: id,
-        name: categoryNameDiv.textContent.trim()
+        name: categoryName
     }
 
     if (editBtn.textContent === 'Edit') {
@@ -117,14 +122,16 @@ function showAddCategoryForm() {
 }
 
 async function addTransaction() {
-    const transactionName = document.querySelector('#addTransactionName');
-    const transactionDate = document.querySelector('#addTransactionDate');
+    let transactionName = document.querySelector('#addTransactionName').value.trim();
+    transactionName = transactionName.toString()[0].toUpperCase() + transactionName.slice(1).toLowerCase();
+    let transactionDate = document.querySelector('#addTransactionDate');
+    if (Date.parse(transactionDate.value) > Date.now())
+        transactionDate.value = '';
     const transactionAmount = document.querySelector('#addTransactionAmount');
     const categoriesSelect = document.querySelector('#categories');
     const selectedCategory = categoriesSelect.value;
 
-    let categories;
-    await getCategories().then(data => categories = data);
+    let categories = await getCategories();
 
     let category;
     categories.forEach(c => {
@@ -133,7 +140,7 @@ async function addTransaction() {
     });
 
     const transaction = {
-        name: transactionName.value.trim(),
+        name: transactionName,
         date: transactionDate.value,
         amount: parseInt(transactionAmount.value.trim(), 10),
         categoryId: category.id
@@ -165,8 +172,7 @@ async function displayTransactions() {
     if (showTransactionsBtn.textContent === 'Show Transactions') {
         showTransactionsBtn.textContent = 'Hide Transactions';
         transactionsTable.removeAttribute('hidden');
-        let transactionsData;
-        await getTransactions().then(data => transactionsData = data);
+        let transactionsData = await getTransactions();
 
         fillTableWithData(transactionsData);
 
@@ -182,12 +188,11 @@ async function displayTransactions() {
 
 async function updateTransaction(id) {
     const editTransactionBtn = document.querySelector(`#editTransactionBtn${id}`);
-    const transactionName = document.querySelector(`#transactionName${id}`);
-    const transactionDate = document.querySelector(`#transactionDate${id}`);
+    let transactionName = document.querySelector(`#transactionName${id}`);
+    let transactionDate = document.querySelector(`#transactionDate${id}`);
     const transactionAmount = document.querySelector(`#transactionAmount${id}`);
     const transactionCategory = document.querySelector(`#transactionCategory${id}`);
-    let categories;
-    await getCategories().then(data => categories = data);
+    let categories = await getCategories();
 
     if (editTransactionBtn.textContent === 'Edit') {
         editTransactionBtn.textContent = 'Save';
@@ -221,9 +226,13 @@ async function updateTransaction(id) {
         transactionName.contentEditable = false;
         transactionAmount.contentEditable = false;
 
+        transactionName = transactionName.textContent.trim().toString()[0].toUpperCase() + transactionName.textContent.trim().slice(1).toLowerCase();
+
         const date = document.querySelector(`#date${id}`);
         transactionDate.textContent = date.value;
         date.remove();
+        if (Date.parse(transactionDate.textContent) > Date.now())
+            transactionDate.textContent = '';
 
         const select = document.querySelector(`#select${id}`);
         transactionCategory.textContent = select.value;
@@ -237,7 +246,7 @@ async function updateTransaction(id) {
 
         const transaction = {
             id: id,
-            name: transactionName.textContent.trim(),
+            name: transactionName,
             date: transactionDate.textContent,
             amount: parseInt(transactionAmount.textContent.trim(), 10),
             categoryId: category.id
@@ -268,8 +277,7 @@ async function showAddTransactionForm() {
     const addTransactionDiv = document.querySelector('#addTransactionDiv');
     const categoriesSelect = document.querySelector('#categories');
 
-    let categories;
-    await getCategories().then(data => categories = data);
+    let categories = await getCategories();
 
     if (addTransactionsBtn.textContent === 'Add Transaction') {
         addTransactionsBtn.textContent = 'Hide Transaction Form';
@@ -296,16 +304,14 @@ async function showAddTransactionForm() {
 async function searchTransactionsByName() {
     const searchTransactionName = document.querySelector('#searchTransactionName');
 
-    let transactions;
-    await getTransactionByName(searchTransactionName.value).then(data => transactions = data);
+    let transactions = await getTransactionByName(searchTransactionName.value.trim());
 
     fillTableWithData(transactions);
 }
 
 async function getTransactionByName(name) {
     let myTransactions = [];
-    let transactions;
-    await getTransactions().then(data => transactions = data);
+    let transactions = await getTransactions();
 
     transactions.forEach(transaction => {
         if (transaction.name.toString().toLowerCase() === name.toString().toLowerCase())
@@ -352,6 +358,7 @@ async function fillTableWithData(data) {
 
     data.forEach(transaction => {
         let tr = tBodyTransactions.insertRow();
+        tr.classList.add('align-middle');
 
         let td1 = tr.insertCell(0);
         let name = document.createElement('div');
@@ -387,6 +394,7 @@ async function fillTableWithData(data) {
         let editBtn = document.createElement('button');
         editBtn.id = `editTransactionBtn${transaction.id}`;
         editBtn.textContent = 'Edit';
+        editBtn.classList.add('btn', 'btn-warning');
         editBtn.addEventListener('click', () => updateTransaction(transaction.id));
         td5.appendChild(editBtn);
 
@@ -394,6 +402,7 @@ async function fillTableWithData(data) {
         let deleteBtn = document.createElement('button');
         deleteBtn.id = `deleteTransactionBtn${transaction.id}`;
         deleteBtn.textContent = 'Delete';
+        deleteBtn.classList.add('btn', 'btn-danger');
         deleteBtn.addEventListener('click', () => deleteTransaction(transaction.id));
         td6.appendChild(deleteBtn);
 

@@ -3,45 +3,62 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Budget App</h1>
-    <button id="addCategoriesBtn" onclick="showAddCategoryForm()">Add Category</button>
-    <button id="showCategoriesBtn" onclick="displayCategories()">Show Categories</button>
-    <button id="showTransactionsBtn" onclick="displayTransactions()">Show Transactions</button>
-    <button id="addTransactionsBtn" onclick="showAddTransactionForm()">Add Transaction</button>
+    <h1 class="display-4 mb-4">Budget App</h1>
+    <button id="addCategoriesBtn" onclick="showAddCategoryForm()" class="btn btn-info">Add Category</button>
+    <button id="showCategoriesBtn" onclick="displayCategories()" class="btn btn-primary">Show Categories</button>
+    <button id="showTransactionsBtn" onclick="displayTransactions()" class="btn btn-primary">Show Transactions</button>
+    <button id="addTransactionsBtn" onclick="showAddTransactionForm()" class="btn btn-info">Add Transaction</button>
 
-    <div hidden id="addCategoryDiv">
-        <form method="POST" onsubmit="addCategory()">
-            <label for="addCategoryName">Category Name:</label>
-            <input type="text" id="addCategoryName" placeholder="Enter a category's name" />
-            <input type="submit" value="Add" />
+    <div hidden id="addCategoryDiv" class="m-4">
+        <form method="POST" onsubmit="addCategory()" class="d-flex flex-column justify-content-center align-items-center gap-2">
+            <div>
+                <label for="addCategoryName" class="form-label">Category Name:</label>
+                <input type="text" id="addCategoryName" placeholder="Enter a category's name" class="form-control" />
+            </div>
+            <input type="submit" value="Add" class="btn btn-success"/>
         </form>
+        <hr />
     </div>
 
-    <div id="categoriesDiv">
+    <div id="categoriesDiv" class="m-4">
     </div>
 
     <div hidden id="addTransactionDiv">
-        <form class="d-flex flex-column justify-content-center align-items-center" method="POST" onsubmit="addTransaction()">
-            <label for="addTransactionName">Transaction Name:</label>
-            <input type="text" id="addTransactionName" placeholder="Enter a transactions's name" />
-            <label for="addTransactionDate">Transaction Date:</label>
-            <input type="date" id="addTransactionDate" />
-            <label for="addTransactionAmount">Transaction Amount:</label>
-            <input type="text" id="addTransactionAmount" placeholder="Enter a transactions's amount" />
-            <label for="categories">Transaction Category:</label>
-            <select name="categories" id="categories">
-            </select>
-            <input type="submit" value="Add" />
+        <hr />
+        <form class="d-flex flex-column justify-content-center align-items-center gap-2" method="POST" onsubmit="addTransaction()">
+            <div>
+                <label for="addTransactionName" class="form-label">Transaction Name:</label>
+                <input type="text" id="addTransactionName" placeholder="Transaction's name" class="form-control"/>
+            </div>
+            <div>
+                <label for="addTransactionDate" class="form-label">Transaction Date:</label>
+                <input type="date" id="addTransactionDate" class="form-control" />
+            </div>
+            <div>
+                <label for="addTransactionAmount" class="form-label">Transaction Amount:</label>
+                <input type="text" id="addTransactionAmount" placeholder="Transaction's amount" class="form-control" />
+            </div>
+            <div>
+                <label for="categories" class="form-label">Transaction Category:</label>
+                <select name="categories" id="categories" class="form-select">
+                </select>
+            </div>
+            <input type="submit" value="Add" class="btn btn-success" />
         </form>
     </div>
 
-    <form hidden method="GET" id="searchTransactionsForm">
-        <label for="searchTransactionName">Transaction Name:</label>
-        <input type="text" id="searchTransactionName" placeholder="Enter a transaction's name'"/>
-        <input type="button" value="Filter" onclick="searchTransactionsByName()"  />
-    </form>
+    <div hidden id="searchTransactionsForm" class="m-4">
+        <hr />
+        <form method="GET" class="d-flex flex-column justify-content-center align-items-center gap-2">
+            <div>
+                <label for="searchTransactionName" class="form-label">Transaction Name:</label>
+                <input type="text" id="searchTransactionName" placeholder="Enter a transaction name" class="form-control"/>
+            </div>
+            <input type="button" value="Filter" onclick="searchTransactionsByName()" class="btn btn-success" />
+        </form>
+    </div>
 
-    <table hidden id="transactionsTable" class="table">
+    <table hidden id="transactionsTable" class="table table-striped mt-2">
         <thead>
             <tr>
                 <th>Name</th>
