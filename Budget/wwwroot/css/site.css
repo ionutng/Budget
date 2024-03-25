@@ -13,10 +13,33 @@ html {
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    margin: 0;
+    padding: 0;
+}
+
+.background {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+}
+
+.background::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url('https://img.freepik.com/free-photo/business-man-financial-inspector-secretary-making-report-calculating-checking-balance-internal-revenue-service-inspector-checking-document-audit-concept_1423-128.jpg?w=1800&t=st=1711392622~exp=1711393222~hmac=269f2620f7b0bb44f66474c9007b55b194e6b0e9bb920595608c4467881a94fb');
+    opacity: .8;
+    background-size: cover;
 }

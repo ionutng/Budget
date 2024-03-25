@@ -204,12 +204,14 @@ async function updateTransaction(id) {
         let date = document.createElement('input');
         date.type = 'date';
         date.id = `date${id}`;
+        date.classList.add('form-control');
         date.value = transactionDate.textContent;
         transactionDate.textContent = '';
         transactionDate.appendChild(date);
 
         let select = document.createElement('select');
         select.id = `select${id}`;
+        select.classList.add('form-select');
 
         categories.forEach(category => {
             let categoryOption = document.createElement('option');
@@ -303,8 +305,11 @@ async function showAddTransactionForm() {
 
 async function searchTransactionsByName() {
     const searchTransactionName = document.querySelector('#searchTransactionName');
-
-    let transactions = await getTransactionByName(searchTransactionName.value.trim());
+    let transactions;
+    if (searchTransactionName.value.trim() === '')
+        transactions = await getTransactions();
+    else
+        transactions = await getTransactionByName(searchTransactionName.value.trim());
 
     fillTableWithData(transactions);
 }
@@ -314,7 +319,7 @@ async function getTransactionByName(name) {
     let transactions = await getTransactions();
 
     transactions.forEach(transaction => {
-        if (transaction.name.toString().toLowerCase() === name.toString().toLowerCase())
+        if (transaction.name.toString().toLowerCase().includes(name.toString().toLowerCase()))
             myTransactions.push(transaction);
 
     });
@@ -369,7 +374,7 @@ async function fillTableWithData(data) {
         let td2 = tr.insertCell(1);
         let date = document.createElement('div');
         date.id = `transactionDate${transaction.id}`;
-        date.textContent = transaction.date;
+        date.textContent = formatDate(transaction.date);
         td2.appendChild(date);
 
         let td3 = tr.insertCell(2);
@@ -408,4 +413,16 @@ async function fillTableWithData(data) {
 
         searchTransactionsForm.removeAttribute('hidden');
     });
+}
+
+function formatDate(inputDate) {
+    const dateParts = inputDate.split('-');
+    const year = dateParts[0];
+    const month = dateParts[1];
+    const day = dateParts[2];
+
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthName = months[parseInt(month) - 1];
+
+    return `${day}-${monthName}-${year}`;
 }
